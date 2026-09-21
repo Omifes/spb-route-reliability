@@ -216,3 +216,24 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# --------------------------------------------------
+# Frontend (Node.js, React, Vite/Webpack)
+# --------------------------------------------------
+node_modules/
+dist/
+dist-ssr/
+build/
+*.local
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# IDEs & System
+.vscode/
+.idea/
+*.swp
+.DS_Store
+Thumbs.db
