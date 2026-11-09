@@ -231,6 +231,13 @@ build/
 .env.*
 !.env.example
 
+# Java / Maven
+*.class
+!.mvn/wrapper/maven-wrapper.jar
+.mvn/timing.properties
+hs_err_pid*
+replay_pid*
+
 # IDEs & System
 .vscode/
 .idea/

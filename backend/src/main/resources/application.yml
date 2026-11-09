@@ -1,0 +1,72 @@
+spring:
+  application:
+    name: spb-route-reliability-backend
+
+  config:
+    # .env удобно использовать и для docker compose, и для локального запуска.
+    # Реальные переменные окружения имеют приоритет над значениями из файла.
+    import:
+      - optional:file:.env[.properties]
+      - optional:file:../.env[.properties]
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/spb_transit}
+    username: ${DB_USER:spb_app}
+    password: ${DB_PASSWORD:spb_app}
+    hikari:
+      maximum-pool-size: ${DB_POOL_MAX_SIZE:10}
+      minimum-idle: ${DB_POOL_MIN_IDLE:2}
+      connection-timeout: 3000
+      validation-timeout: 1000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: Europe/Moscow
+        format_sql: false
+        default_batch_fetch_size: 32
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    clean-disabled: true
+    validate-migration-naming: true
+
+  jackson:
+    time-zone: Europe/Moscow
+
+app:
+  demo-user:
+    enabled: ${APP_DEMO_USER_ENABLED:true}
+    email: ${APP_DEMO_USER_EMAIL:demo@spb.local}
+    password: ${APP_DEMO_USER_PASSWORD:demo}
+  status:
+    current-window: ${STATUS_CURRENT_WINDOW:PT5M}
+    stale-window: ${STATUS_STALE_WINDOW:PT60M}
+  cors:
+    # Origin фронтенда. Несколько значений — через запятую, для разработки
+    # можно указать *. В production укажите точный адрес фронтенда.
+    allowed-origins: ${APP_CORS_ALLOWED_ORIGINS:http://localhost:5500,http://127.0.0.1:5500,http://localhost:8000,http://localhost:3000,http://localhost:5173}
+
+server:
+  port: ${SERVER_PORT:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized
+
+logging:
+  level:
+    root: INFO
+    ru.spb.transit: INFO
