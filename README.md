@@ -1,5 +1,7 @@
 # Веб-сервис оценки надёжности маршрутов общественного транспорта Санкт-Петербурга
 
+[![CI](https://github.com/Omifes/spb-route-reliability/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Omifes/spb-route-reliability/actions/workflows/ci.yml)
+
 Сервис собирает данные о движении городского транспорта, рассчитывает показатели
 надёжности маршрутов и помогает пользователю выбирать поездки с учётом
 исторической статистики задержек и отмен.
@@ -16,7 +18,7 @@
 - **Database:** PostgreSQL 16, Flyway
 - **Тесты:** JUnit 5, AssertJ, MockMvc, встроенный PostgreSQL (без Docker)
 - **Frontend:** JavaScript (ES2020+), HTML5, CSS3
-- **Инфраструктура:** Docker Compose для локальной БД
+- **Инфраструктура:** Docker Compose для локальной БД, GitHub Actions для CI
 
 ## Структура репозитория
 
@@ -36,8 +38,10 @@ backend/                       Spring Boot-приложение
   src/test/java/               unit- и интеграционные тесты
 docs/api.md                    описание REST API
 docs/database.md               описание схемы, индексов и миграций
+docs/implementation.md         обзор реализованных этапов 1–4
 docker-compose.yml             PostgreSQL для локального запуска
 .env.example                   пример переменных окружения
+.github/workflows/ci.yml       сборка и тесты в GitHub Actions
 ```
 
 ## Быстрый старт

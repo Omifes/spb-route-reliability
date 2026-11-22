@@ -1,5 +1,7 @@
 package ru.spb.transit.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.spb.transit.domain.Route;
@@ -21,6 +23,8 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class TripService {
+
+    private static final Logger log = LoggerFactory.getLogger(TripService.class);
 
     private final UserRepository userRepository;
     private final RouteRepository routeRepository;
@@ -70,7 +74,11 @@ public class TripService {
 
         SavedTrip trip = new SavedTrip(
                 user, route, (short) 0, fromStop, toStop, name, request.requiredArrivalTime());
-        return toResponse(savedTripRepository.saveAndFlush(trip));
+        SavedTrip saved = savedTripRepository.saveAndFlush(trip);
+        log.info("Создана поездка id={} user={} route={} from={} to={}",
+                saved.getId(), email, route.getExternalId(),
+                fromStop.getExternalId(), toStop.getExternalId());
+        return toResponse(saved);
     }
 
     public SavedTrip findOwnedTrip(String email, Long tripId) {
@@ -83,6 +91,7 @@ public class TripService {
     public void delete(String email, Long tripId) {
         SavedTrip trip = findOwnedTrip(email, tripId);
         savedTripRepository.delete(trip);
+        log.info("Удалена поездка id={} user={}", tripId, email);
     }
 
     private User requireUser(String email) {

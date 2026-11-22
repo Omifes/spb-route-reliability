@@ -1,5 +1,7 @@
 package ru.spb.transit.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +26,7 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class TripStatusService {
 
+    private static final Logger log = LoggerFactory.getLogger(TripStatusService.class);
     private static final ZoneId MOSCOW = ZoneId.of("Europe/Moscow");
 
     private final TripService tripService;
@@ -79,7 +82,7 @@ public class TripStatusService {
                 ? null
                 : update.getObservedAt().atZone(MOSCOW).toLocalDateTime();
 
-        return new TripStatusResponse(
+        TripStatusResponse response = new TripStatusResponse(
                 trip.getId(),
                 trip.getRoute().getExternalId(),
                 nextStop(trip, update),
@@ -90,6 +93,9 @@ public class TripStatusService {
                 willArriveOnTime,
                 dataStatus,
                 dataUpdatedAt);
+        log.info("Статус поездки tripId={} route={} dataStatus={} etaMinutes={} willArriveOnTime={}",
+                trip.getId(), trip.getRoute().getExternalId(), dataStatus, etaMinutes, willArriveOnTime);
+        return response;
     }
 
     private DataStatus dataStatus(TransportUpdate update, Instant now) {

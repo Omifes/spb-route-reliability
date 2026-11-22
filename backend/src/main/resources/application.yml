@@ -72,5 +72,8 @@ management:
 
 logging:
   level:
-    root: INFO
-    ru.spb.transit: INFO
+    root: ${LOG_LEVEL_ROOT:INFO}
+    ru.spb.transit: ${LOG_LEVEL_APP:INFO}
+  pattern:
+    # Единый формат для консоли (STDOUT): время, уровень, поток, requestId, логгер.
+    console: "%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX} %-5level [%thread] [reqId=%X{requestId:-none}] %logger{36} - %msg%n"

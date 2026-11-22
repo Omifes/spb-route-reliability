@@ -1,5 +1,7 @@
 package ru.spb.transit.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.spb.transit.domain.HistoricalStatistic;
@@ -18,6 +20,8 @@ import java.util.Locale;
 @Service
 @Transactional(readOnly = true)
 public class ReliabilityService {
+
+    private static final Logger log = LoggerFactory.getLogger(ReliabilityService.class);
 
     public static final int DEFAULT_PERIOD_DAYS = 30;
     public static final int MAX_PERIOD_DAYS = 365;
@@ -54,7 +58,7 @@ public class ReliabilityService {
 
         ReliabilitySummary summary = reliabilityCalculator.calculate(statistics, periodDays);
 
-        return new ReliabilityResponse(
+        ReliabilityResponse response = new ReliabilityResponse(
                 trip.getId(),
                 periodDays,
                 summary.averageDelayMinutes(),
@@ -63,5 +67,10 @@ public class ReliabilityService {
                 summary.tripsCount(),
                 summary.riskLevel().name().toLowerCase(Locale.ROOT),
                 summary.dataSufficient());
+        log.info("Надёжность tripId={} route={} stop={} periodDays={} risk={} trips={} avgDelay={}",
+                trip.getId(), trip.getRoute().getExternalId(), trip.getToStop().getExternalId(),
+                periodDays, response.riskLevel(), response.tripsCount(),
+                response.averageDelayMinutes());
+        return response;
     }
 }
